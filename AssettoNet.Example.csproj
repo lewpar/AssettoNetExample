@@ -8,8 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AssettoNet" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.3" />
+    <Reference Include="AssettoNet">
+      <HintPath>..\AssettoNet\bin\Release\netstandard2.1\publish\AssettoNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
