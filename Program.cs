@@ -6,21 +6,19 @@ internal class Program
 {
     static async Task Main(string[] args)
     {
-        var client = new AssettoClient();
+        var client = new AssettoClient(host: "localhost", port: 9996);
 
         client.OnConnected += Client_OnConnected;
         client.OnLapCompleted += Client_OnLapCompleted;
         client.OnPhysicsUpdate += Client_OnPhysicsUpdate;
         client.OnUnhandledException += Client_OnUnhandledException;
+        client.OnServerListenerClosed += Client_OnServerListenerClosed;
 
         Console.WriteLine("Connecting to server..");
 
-        await client.ConnectAsync(host: "localhost", port: 9996);
-        await client.ListenForEventsAsync();
+        await client.ConnectAsync();
 
-        await Task.Delay(TimeSpan.FromSeconds(120));
-
-        await client.DisconnectAsync();
+        await Task.Delay(-1);
     }
 
     private static void Client_OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
@@ -38,14 +36,19 @@ internal class Program
 
     private static void Client_OnLapCompleted(object? sender, Events.AssettoLapCompletedEventArgs e)
     {
-        Console.WriteLine();
-        Console.WriteLine($"[Completed Lap {e.Data.Lap}]");
-        Console.WriteLine($"{e.Data.ToString()}");
+        //Console.WriteLine();
+        //Console.WriteLine($"[Completed Lap {e.Data.Lap}]");
+        //Console.WriteLine($"{e.Data.ToString()}");
     }
 
     private static void Client_OnConnected(object? sender, Events.AssettoConnectedEventArgs e)
     {
         Console.WriteLine("Connected.");
         Console.WriteLine(e.Handshake.ToString());
+    }
+    
+    private static void Client_OnServerListenerClosed(object? sender, EventArgs e)
+    {
+        Console.WriteLine($"Client disconnected from server.");
     }
 }
