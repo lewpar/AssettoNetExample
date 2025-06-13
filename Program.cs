@@ -9,16 +9,46 @@ internal class Program
         var client = new AssettoClient(host: "localhost", port: 9996);
 
         client.OnConnected += Client_OnConnected;
+        client.OnDisconnected += Client_OnDisconnected;
         client.OnLapCompleted += Client_OnLapCompleted;
         client.OnPhysicsUpdate += Client_OnPhysicsUpdate;
         client.OnUnhandledException += Client_OnUnhandledException;
-        client.OnServerListenerClosed += Client_OnServerListenerClosed;
 
-        Console.WriteLine("Connecting to server..");
+        Console.WriteLine("Waiting for UDP server..");
+        while (!client.IsAssettoUdpServerListening())
+        {
+            await Task.Delay(100);
+        }
 
-        await client.ConnectAsync();
+        bool retryConnection = true;
+        
+        Console.WriteLine("Press Ctrl+C to disconnect.");
+        Console.CancelKeyPress += async (sender, eventArgs) =>
+        {
+            if (client.IsConnected)
+            {
+                Console.WriteLine("Disconnecting..");
+                retryConnection = false;
+                await client.DisconnectAsync();
+                Console.WriteLine("Press ENTER to exit.");
+                Console.ReadLine();
+            }
+        };
 
-        await Task.Delay(-1);
+        while (retryConnection)
+        {
+            if (!client.IsConnected &&
+                client.IsAssettoUdpServerListening())
+            {
+                Console.WriteLine("Connecting to server..");
+                await client.ConnectAsync();
+            }
+        }
+    }
+
+    private static void Client_OnDisconnected(object? sender, EventArgs e)
+    {
+        Console.WriteLine("Disconnected.");
     }
 
     private static void Client_OnUnhandledException(object? sender, UnhandledExceptionEventArgs e)
@@ -45,10 +75,5 @@ internal class Program
     {
         Console.WriteLine("Connected.");
         Console.WriteLine(e.Handshake.ToString());
-    }
-    
-    private static void Client_OnServerListenerClosed(object? sender, EventArgs e)
-    {
-        Console.WriteLine($"Client disconnected from server.");
     }
 }

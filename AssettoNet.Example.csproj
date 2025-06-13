@@ -9,15 +9,8 @@
 
   <ItemGroup>
     <Reference Include="AssettoNet">
-      <HintPath>..\AssettoNet\bin\Release\netstandard2.1\publish\AssettoNet.dll</HintPath>
+      <HintPath>..\AssettoNet\bin\Debug\netstandard2.1\publish\AssettoNet.dll</HintPath>
     </Reference>
-    <Reference Include="MOZA_API_CSharp">
-      <HintPath>..\..\Downloads\MOZA_SDK\SDK_CSharp\AnyCPU\MOZA_API_CSharp.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AssettoNet" Version="2.0.4" />
   </ItemGroup>
 
 </Project>
